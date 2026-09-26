@@ -1,6 +1,6 @@
 # v0.1 release evidence
 
-Date: 26 September 2026. Status: local learning release, not yet published to GitHub.
+Date: 26 September 2026. Status: learning release. Source repository: https://github.com/Sharmishtha30/sales-coaching-engine
 
 ## Delivered
 
@@ -41,4 +41,4 @@ Record a consenting two-person staged script, annotate the actual words/speakers
 
 ## Publication status
 
-Local Git history exists. Sharmishtha30 is now an available connected GitHub account, correcting the earlier account-only limitation. No accessible target repository was returned, and the available connector does not expose repository creation. No remote push or public release has occurred. Create an empty public `Sharmishtha30/sales-coaching-engine` repository and grant access before publishing. The release archive includes a Git bundle preserving local commits.
+The founder created the public `Sharmishtha30/sales-coaching-engine` repository on 26 September 2026. The initial local release archive preserves local commits in a Git bundle. Repository publication carries the discovery, specification and implementation history forward. The checks listed above were run locally before publication; consult GitHub Actions for subsequent CI results. This is source publication, not a hosted API or remote MCP deployment.

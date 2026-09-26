@@ -18,6 +18,8 @@ An open-source learning project: self-hosted, evidence-linked sales-call feedbac
 Python 3.11+ on Linux/macOS (Windows: use Docker/WSL).
 
 ```bash
+git clone https://github.com/Sharmishtha30/sales-coaching-engine.git
+cd sales-coaching-engine
 python -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev]'
