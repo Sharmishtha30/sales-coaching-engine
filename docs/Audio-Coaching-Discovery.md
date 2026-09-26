@@ -1,6 +1,51 @@
-# Sales coaching engine — discovery and research v0.2
+# Sales coaching engine — discovery and research v0.3
 
 Updated: 26 September 2026. Status: discovery; not an approved PRD or TRD. No product implementation started.
+
+## 0. Current project charter — learning in public
+
+The founder has confirmed that this is an in-depth open-source AI learning project. Monetization, pricing, customer acquisition and distribution are not project goals. A unique commercial moat is not a prerequisite to building. Prior market research remains useful for understanding alternatives and avoiding unsupported novelty claims.
+
+Deliver one self-hosted sales-coaching engine, an embeddable API and an MCP server over the same functionality. Both interfaces are in scope. Users provide their own provider credentials, compute and storage and bear their own operating costs. The maintainer does not provide a free hosted inference endpoint. A fully local model stack is a possible later option, not implied by self-hosting the engine.
+
+The intended repository is public, superseding earlier private-repository recommendations. No remote repository has been created or pushed. Public code does not make user recordings, voice references, credentials or private evaluation labels public. Only cleared demo data and aggregate results belong in public releases. An explicit open-source license is still to be selected before publication.
+
+Success means a reproducible working engine, understandable tradeoffs, evidence-backed output, documented failure cases and measurable improvements across versions. Adoption is welcome but is not a gate. Manager usefulness remains the product-quality check; a developer's ability to install and integrate it is the usability check.
+
+### Learning questions
+
+- How do transcription mistakes change downstream coaching, and which mistakes matter most?
+- When do source channels or speaker metadata outperform diarization or voice matching?
+- What can be measured directly in audio, what requires contextual interpretation, and when should the system abstain?
+- Does prior-call memory improve useful feedback, or repeat stale and incorrect judgments?
+- What is the accuracy/cost/latency tradeoff of each provider and processing stage?
+- Can API and MCP produce equivalent results, correction behavior and access boundaries?
+- Which failures come from audio quality, missing context, model choice, prompts or evaluation labels?
+
+### Accuracy must be a scorecard
+
+| Layer | Candidate measurement | Key caveat |
+| --- | --- | --- |
+| Transcription | Word error rate on human transcripts; separate names, numbers and sales terms | An accurate polished transcript may still omit fillers |
+| Speaker attribution | Segment attribution errors, diarization error and unknown coverage | Wrong-person coaching is more serious than an unresolved speaker |
+| Voice matching, if enabled | False matches, missed matches and unknown rejection | Compare across microphones and recording conditions |
+| Fillers and pauses | Event precision/recall and timestamp deviation | State the annotation rules and speaking-time denominator |
+| Sales analysis | Rubric agreement and correct supporting evidence | Human reviewers can disagree; retain uncertainty |
+| Recommendations | Relevance, actionability and unsupported-claim rate | A persuasive recommendation is not necessarily correct |
+| Memory | Correct prior-fact retrieval, stale-context errors and correction propagation | A corrected identity must not leave old judgments attached |
+| Interfaces | Schema validity, equivalent outputs and reliable job/correction handling | Interface success does not establish coaching quality |
+
+Report denominators, dataset/model/rubric versions, settings and uncertainty. Compare on a fixed held-out set; if used to guide changes, treat it as development data and obtain fresh holdout examples. Publish regressions as well as gains. Separate synthetic-demo performance from real-call performance. Do not manufacture a single overall accuracy percentage.
+
+### Experiment record for every meaningful iteration
+
+Record the question, hypothesis, baseline, isolated change, dataset split, model/provider versions, prompts/configuration, results by metric and relevant audio condition, cost per audio hour, processing time, failure examples, limitations and the decision to keep or revert. Prefer one meaningful change at a time. Do not add agents, retrieval or fine-tuning unless a measured failure motivates them.
+
+Proposed ablations: transcript-only versus audio-aware analysis; no memory versus verified memory; source identity versus inferred speaker identity; generic rubric versus sales-context rubric. These are planned comparisons, not completed experiments.
+
+### Public documentation plan
+
+Maintain a README/quickstart, PRD, TRD, architecture decision records, evaluation guide, experiment log, failure catalogue, API/MCP usage examples and changelog. Each public update should explain what was attempted, what changed, what failed and what remains uncertain. No posting to social accounts is authorized or performed.
 
 ## 1. Decisions captured from the founder
 
@@ -20,9 +65,9 @@ Updated: 26 September 2026. Status: discovery; not an approved PRD or TRD. No pr
 
 Help a sales manager identify specific, coachable behaviors across recorded calls, prescribe focused practice, and verify improvement in subsequent calls, using the company's sales context and evidence that can be replayed.
 
-This proposition is a hypothesis, not proof of demand or uniqueness. Audio processing is an enabling component. The customer buys more useful coaching with less manager review time.
+This proposition is a hypothesis, not proof of demand or uniqueness. Audio processing is an enabling component. The learning objective is to build and evaluate useful coaching, with less manual review where the evidence supports it.
 
-## 3. Customer and market analysis
+## 3. Earlier commercial analysis — retained as context, not launch requirements
 
 | Candidate customer | User and buyer | Job to be done | Main risk | Validation needed |
 | --- | --- | --- | --- | --- |
@@ -73,7 +118,7 @@ Potential differentiation to test: an embeddable, manager-calibrated coaching en
 
 Potential defensibility over time: permissioned domain-specific evaluation examples, useful manager corrections, trusted workflow integrations, and evidence that interventions improve relevant behaviors. Raw data accumulation alone is not a moat. Cross-customer model improvement would require an explicit permitted data use; private customer memory remains isolated by default.
 
-Reasons not to build: existing tools meet the need at acceptable cost; managers will not correct/review feedback; usable recordings cannot be obtained; improvement cannot be demonstrated; buyers want a full dialer/CRM replacement beyond our scope. Buy or integrate if these apply.
+These competitors do not remove the learning value of building. Reuse commodity components where useful and investigate the differences transparently. Lack of usable recordings or trustworthy evaluation is a reason to change the validation plan; lack of paying customers is not a reason to stop this project.
 
 ## 6. What the engine should and should not infer
 
@@ -155,13 +200,13 @@ Then verify the behavior on comparable live calls. The initial product may recom
 | Recurring voice identification | pyannoteAI | Commercial voiceprint matching option [S13] | Defer unless metadata is inadequate; test false matches and unknown speakers |
 | Acoustic feature extraction | openSMILE | Official docs state commercial products require commercial licensing [S14] | Do not assume free commercial deployment; evaluate alternatives or obtain terms |
 
-Recommendation: buy commodity speech processing for the earliest benchmark if it meets privacy/cost needs; own the rubric, evidence model, corrections, memory and manager workflow. Self-host only when accuracy, deployment requirements or measured economics justify its operating burden. No supplier is selected and no subscriptions have been purchased.
+Recommendation: self-host the engine by default; allow user-funded speech/model services behind replaceable adapters. Compare local components later when they answer a learning question or deployment need. Own the rubric, evidence model, corrections, memory and interface contracts. Engine hosting and model hosting are separate choices. No supplier is selected and no subscriptions have been purchased.
 
 ## 9. Interface recommendation, not a TRD decision
 
-An asynchronous API is the leading hypothesis for platform integrations: submit audio/context, get a job reference, retrieve status/results or receive a webhook. Add MCP as an adapter when an actual customer wants an assistant to invoke those operations. MCP is a client-server protocol exposing capabilities to AI applications [S15]; it does not replace the underlying processing or storage.
+Both an API and MCP adapter are confirmed scope, backed by the same engine. Proposed behavior: submit audio/context, obtain a job reference, inspect status/results, provide speaker corrections and retrieve prior context. MCP exposes the same capabilities to compatible assistants [S15]. Detailed transport, authentication, schema and job design belong in the TRD. A user connects to their own installation; a public repository is not itself a running MCP endpoint.
 
-A small manager review surface is likely necessary to confirm speakers, inspect evidence and correct feedback. It could be ours or embedded in a customer's application. Decide this with the first buyer. Stable structured JSON plus a readable report is the proposed output; schema design waits for PRD alignment.
+A dedicated dashboard is deferred. API clients or an MCP host handle clarification and speaker confirmation; the engine returns explicit unresolved states. Stable structured JSON plus a readable report is proposed. We will include a minimal reproducible usage example so no commercial integration is needed to learn or test.
 
 Full-journey analysis also requires explicit deal linkage, product/playbook context, call dates and known outcomes. Audio alone cannot reliably reconstruct missing calls, off-call email exchanges or CRM stage changes. Maintain separate memory for the rep's skills and the deal's facts.
 
@@ -169,11 +214,11 @@ Full-journey analysis also requires explicit deal linkage, product/playbook cont
 
 | Version | User-visible outcome | Gate before moving on |
 | --- | --- | --- |
-| Discovery / v0 | Ten-call rubric, human reference notes, blind baseline comparison | Manager agrees what useful feedback means |
-| v0.1 business pilot | English uploads with metadata, confirmed speakers, evidence-backed call review and export; manager feedback captured | Attribution and recommendation quality meet agreed gates |
-| v0.2 continuity | Rep/deal histories, cross-call comparison, stage-aware coaching and manager-assigned practice | Repeated use and observable behavior changes |
-| v0.3 integration | One selected source integration, documented API/webhooks, multi-customer operation and usage reporting | Reliable onboarding and paid use |
-| Later | MCP if demanded; product insight aggregation; additional call categories and markets | Clear user demand and separate acceptance criteria |
+| Discovery / v0 | PRD, then TRD; reference-call rubric and evaluation design | Requirements and evaluation criteria agreed before implementation |
+| v0.1 reproducible baseline | Self-hosted engine, API and MCP; English audio, confirmed speaker mapping, structured evidence-backed feedback and basic user-owned persistence | Same sample succeeds through both interfaces; failures and baseline metrics documented |
+| v0.2 measured improvement | Audio delivery features, stronger attribution, difficult-audio cases and systematic provider comparisons | Improvement and regressions measured on held-out examples |
+| v0.3 continuity | Richer rep/deal histories, correction propagation, stage-aware comparison and practice tracking | Memory adds value in controlled comparisons without stale-identity leakage |
+| Later | Optional voice enrollment, product insights, source adapters and local-model options | Each addition addresses a documented need and has its own evaluation |
 
 In v0.1 retain stable rep/deal IDs and earlier confirmed notes where available, so continuity can be evaluated without promising mature trend analytics. This sequence is proposed, not a unilateral reduction of the founder's full-journey objective.
 
@@ -193,18 +238,17 @@ Budget buckets:
 3. Fixed operations: hosting, database, monitoring, support and security work.
 4. Human QA: manager review and calibration time; track separately even if founder-provided.
 
-Ask the founder for an acceptable monthly experiment spend (for example $100, $300 or $1,000) and a separate one-time engineering ceiling. These are selectable planning envelopes, not quoted estimates. Final costing requires volume and retention assumptions plus a measured pipeline. No spend is authorized by the illustrative model.
+There is no pricing or monetization workstream. End users bear runtime costs. The founder's own development evaluations may still use paid APIs or local compute; those costs are separate from operating a public service. Record per-experiment costs and support bounded usage; choose any paid experiment budget when an actual run is proposed. No spend is authorized by the illustrative model.
 
 ## 12. Next questions and validation plan
 
-1. Which actual team can supply the ten calls, what do they sell, and in which geography? How many reps and who is the manager sponsor?
-2. Are these calls linked across deals, and can we get rep/deal IDs, dates and a basic product/pricing/claims guide?
-3. Do we have a team buyer first, or a platform already asking to embed this? Name the current dialer, meeting tool and CRM if known.
-4. Should the first practice cadence be a manager-assigned checklist, or must reps submit practice audio within the pilot?
-5. What monthly experiment spend and one-time engineering budget are comfortable? What does the pilot need to prove to become paid?
-6. Confirm a reachable GitHub owner/repository. Suggested private repository name: sales-coaching-engine. Creation is not available in the exposed connector; the requested owner is not the connected account.
+1. Are ten real sales recordings available with permission for analysis? What is being sold, and are any calls linked to the same rep/deal? If unavailable, begin with clearly labeled staged examples and later validate on real calls.
+2. What is the founder's current coding experience, and which tradeoffs should receive the deepest explanation? This affects teaching pace, not the intended depth of the engine.
+3. Resolve the public GitHub repository target. Suggested name: sales-coaching-engine. Creation is not available in the exposed connector; the requested owner is not the connected account.
 
-Research interviews: ask three managers for their last real coaching example and current review effort; interview two potential platform buyers about embedding needs and procurement. Test the same call set against manual review, transcript-only feedback, our eventual audio-aware baseline and an incumbent trial where authorized. No outreach has been sent and no competitor trials started.
+Working defaults for the PRD: English; recorded-file input; asynchronous execution; structured JSON and a readable report; user-controlled storage; both API and MCP; manager-confirmed speaker mapping; practice recommendations before an interactive roleplay system. Authentication, installation target, provider selection, license and optional voice retention need explicit treatment before release. No customer acquisition is required to proceed.
+
+Optional user research: ask available managers to review the rubric and feedback. Sales outreach, buyer interviews and willingness-to-pay validation are removed as gates. Compare human notes, transcript-only feedback and the eventual audio-aware engine; incumbent trials are optional. No outreach or trials have been started.
 
 PRD follows these answers: personas, problem, boundaries, workflows, metrics, retention/access and acceptance criteria. TRD follows PRD agreement: schemas, jobs, source adapters, provider comparison, evidence pipeline, identity correction, memory rules, tenant isolation, deletion, evaluation, costs and deployment. Neither is finalized now.
 
@@ -232,3 +276,4 @@ All accessed 26 September 2026. Research is an initial decision memo, not exhaus
 
 - v0.1: broad audio-coaching brief covering sales and interviews, initial questions and market hypotheses.
 - v0.2: sales chosen first; manager workflow, audio evidence, source identity, seed evaluation, competitor/open-source review, phased delivery and cost model documented. API is a recommendation pending buyer validation. Remote Git creation/push remains outstanding.
+- v0.3: founder confirmed learning in public, a public open-source repository, self-hosting and user-funded operation. Both API and MCP are required. Commercial validation and pricing are no longer gates. Added an accuracy scorecard, controlled experiments, public documentation plan and revised milestones. Remote publication remains outstanding; this revision is documentation only.
