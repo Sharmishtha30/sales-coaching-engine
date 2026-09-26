@@ -1,0 +1,156 @@
+{
+  "id": "4462604f-d601-4745-bc3b-2d36d1c31f43",
+  "revision": 2,
+  "created_at": "2026-09-26T08:46:47.854464+00:00",
+  "context": {
+    "deal_id": "example-helpbox",
+    "occurred_at": "2026-09-01T10:00:00Z",
+    "stage": "discovery",
+    "product_context": "Fictional FlowDesk: assignment dashboards, $80/user. HelpBox integration is not available. Do not promise it.",
+    "call_goal": "Understand the buyer's workflow and agree an appropriate next step."
+  },
+  "status": "completed",
+  "identity": {
+    "rep_id": "staged-maya",
+    "rep_name": "Maya (fictional)",
+    "speaker": "A"
+  },
+  "transcript": {
+    "source": "staged_fixture",
+    "utterances": [
+      {
+        "id": "u1",
+        "speaker": "A",
+        "start": 0.0,
+        "end": 8.0,
+        "text": "Hello, um, I am Maya from FlowDesk. What is slowing your team down today?",
+        "words": []
+      },
+      {
+        "id": "u2",
+        "speaker": "B",
+        "start": 8.0,
+        "end": 16.0,
+        "text": "We copy customer requests between email and spreadsheets. We lose about two hours every day.",
+        "words": []
+      },
+      {
+        "id": "u3",
+        "speaker": "A",
+        "start": 16.0,
+        "end": 24.0,
+        "text": "Uh, our product has dashboards and automation. Um, it costs eighty dollars per user.",
+        "words": []
+      },
+      {
+        "id": "u4",
+        "speaker": "B",
+        "start": 24.0,
+        "end": 30.0,
+        "text": "Does it connect to our existing helpdesk? We cannot replace that system.",
+        "words": []
+      },
+      {
+        "id": "u5",
+        "speaker": "A",
+        "start": 30.0,
+        "end": 38.0,
+        "text": "I need to check that integration. Could you tell me which helpdesk you use?",
+        "words": []
+      },
+      {
+        "id": "u6",
+        "speaker": "B",
+        "start": 38.0,
+        "end": 44.0,
+        "text": "We use HelpBox. Can you send me the details?",
+        "words": []
+      },
+      {
+        "id": "u7",
+        "speaker": "A",
+        "start": 44.0,
+        "end": 50.0,
+        "text": "Yes, I will check the integration and email you tomorrow.",
+        "words": []
+      }
+    ],
+    "provider_metadata": {
+      "fixture": "discovery",
+      "timings": "authored utterance timings; no audio was transcribed"
+    }
+  },
+  "result": {
+    "schema_version": "1",
+    "engine_version": "0.1.0",
+    "coaching_mode": "staged_rules_only",
+    "category": "uncertain",
+    "stage": "discovery",
+    "stage_source": "provided_context",
+    "delivery": {
+      "rep_utterance_span_seconds": 30.0,
+      "recognized_word_count": 52,
+      "recognized_filler_count": 3,
+      "filler_events": [
+        {
+          "utterance_id": "u1",
+          "start": 0.0,
+          "end": 8.0,
+          "token": "um,",
+          "timing_precision": "utterance_only"
+        },
+        {
+          "utterance_id": "u3",
+          "start": 16.0,
+          "end": 24.0,
+          "token": "Uh,",
+          "timing_precision": "utterance_only"
+        },
+        {
+          "utterance_id": "u3",
+          "start": 16.0,
+          "end": 24.0,
+          "token": "Um,",
+          "timing_precision": "utterance_only"
+        }
+      ],
+      "fillers_per_utterance_minute": 6.0,
+      "words_per_utterance_minute": 104.0,
+      "denominator": "union of rep utterance spans; includes internal pauses, not phonated time"
+    },
+    "findings": [
+      {
+        "dimension": "delivery",
+        "observation": "The transcript contains 3 recognized filler tokens in the confirmed rep's turns.",
+        "recommendation": "Listen to these excerpts. If fillers disrupt the explanation, rehearse it aloud with deliberate pauses, then try an unscripted objection. Compare a later call with the same objective.",
+        "uncertainty": "Recognized fillers are not proof of low confidence or poor selling. Verify against the audio; ASR can omit or invent words.",
+        "evidence": [
+          {
+            "utterance_id": "u1",
+            "start": 0.0,
+            "end": 8.0,
+            "speaker": "A",
+            "quote": "Hello, um, I am Maya from FlowDesk. What is slowing your team down today?"
+          },
+          {
+            "utterance_id": "u3",
+            "start": 16.0,
+            "end": 24.0,
+            "speaker": "A",
+            "quote": "Uh, our product has dashboards and automation. Um, it costs eighty dollars per user."
+          }
+        ]
+      }
+    ],
+    "semantic_provider": null,
+    "limitations": [
+      "Filler counts depend on transcription and are not a confidence score.",
+      "Rates use utterance spans, not measured vocal activity. No acoustic emotion inference.",
+      "History compares observations; it does not demonstrate causal improvement.",
+      "Voiceprints and automatic cross-call voice recognition are not implemented.",
+      "Staged transcript and timings: no speech recognition or acoustic accuracy was tested."
+    ]
+  },
+  "error": null,
+  "prior_calls": []
+}

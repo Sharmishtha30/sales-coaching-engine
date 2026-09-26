@@ -1,0 +1,8 @@
+.git
+.venv
+.env
+data
+audio
+__pycache__
+.pytest_cache
+dist
