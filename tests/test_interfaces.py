@@ -68,3 +68,25 @@ async def test_real_mcp_stdio_roundtrip(tmp_path):
             assert done["status"] == "completed"
             assert done["result"]["delivery"]["recognized_filler_count"] == 3
             assert done["result"]["coaching_mode"] == "staged_rules_only"
+
+
+def test_swagger_bearer_security_and_invalid_tokens(settings, engine):
+    with TestClient(create_app(settings, engine)) as client:
+        schema = client.get("/openapi.json").json()
+        assert schema["components"]["securitySchemes"]["HTTPBearer"] == {
+            "type": "http", "scheme": "bearer",
+            "description": "Paste COACH_API_TOKEN only; omit the Bearer prefix."
+        }
+        for path, methods in schema["paths"].items():
+            if path.startswith("/v1/"):
+                for operation in methods.values():
+                    assert operation["security"] == [{"HTTPBearer": []}]
+                    assert not any(p["name"].lower() == "authorization"
+                                   for p in operation.get("parameters", []))
+        assert "security" not in schema["paths"]["/health"]["get"]
+        for value in ("Bearer wrong", "Basic test-token", "Bearer", "Bearer "):
+            response = client.get("/v1/reps/maya/history", headers={"Authorization": value})
+            assert response.status_code == 401
+            assert response.headers["www-authenticate"] == "Bearer"
+        assert client.get("/v1/reps/maya/history",
+                          headers={"Authorization": "Bearer test-token"}).status_code == 200

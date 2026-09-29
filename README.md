@@ -38,7 +38,7 @@ export COACH_API_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe
 sales-coach serve
 ```
 
-Open http://127.0.0.1:8000/docs for interactive endpoint documentation. Requests use `Authorization: Bearer <token>`. `/health` and schema docs expose no call data. The command binds to localhost.
+Open http://127.0.0.1:8000/docs for interactive endpoint documentation. In the browser, click **Authorize**, paste only the token (without `Bearer` or quotes), then click **Authorize** and **Close**. The browser adds the header automatically. Command-line requests use `Authorization: Bearer <token>`. `/health` and schema docs expose no call data. The command binds to localhost.
 
 In another terminal, export the same token, then:
 

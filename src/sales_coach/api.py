@@ -1,6 +1,7 @@
 import secrets
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends, Header, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import PlainTextResponse, FileResponse
 from pydantic import ValidationError
 from .config import Settings
@@ -27,9 +28,12 @@ def create_app(settings=None, engine=None):
 
     app = FastAPI(title="Sales Coaching Engine", version="0.1.0", lifespan=lifespan)
 
-    def auth(authorization: str | None = Header(default=None)):
-        if not settings.api_token or not secrets.compare_digest(authorization or "", f"Bearer {settings.api_token}"):
-            raise HTTPException(401, "Bearer token required")
+    bearer = HTTPBearer(auto_error=False, description="Paste COACH_API_TOKEN only; omit the Bearer prefix.")
+
+    def auth(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)):
+        if (not settings.api_token or credentials is None
+                or not secrets.compare_digest(credentials.credentials.encode(), settings.api_token.encode())):
+            raise HTTPException(401, "Bearer token required", headers={"WWW-Authenticate": "Bearer"})
 
     def service():
         return app.state.engine
